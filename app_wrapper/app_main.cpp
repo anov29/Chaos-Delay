@@ -616,7 +616,7 @@ extern bool AttachGUI()
     if (pGraphics)
     {
       gPluginInstance->OnGUIOpen();
-	  gPluginInstance->ResizeAtGUIOpen(pGraphics);
+	  // gPluginInstance->ResizeAtGUIOpen(pGraphics);
       return true;
     }
   }

@@ -41,11 +41,11 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 
   pGraphics->AttachPanelBackground(&COLOR_GRAY);
   
-  IBitmap* knob = pGraphics->LoadPointerToBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
+  IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
 
-  pGraphics->AttachControl(new IKnobMultiControl(this, 20, 200, kDelayMS, knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, 80, 200, kFeedbackPC, knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, 140, 200, kWetPC, knob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 20, 200, kDelayMS, &knob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 80, 200, kFeedbackPC, &knob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 140, 200, kWetPC, &knob));
   
   AttachGraphics(pGraphics);
 
@@ -65,44 +65,60 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 {
   // Mutex is already locked for us.
 
-  double* in1 = inputs[0];
-  double* in2 = inputs[1];
+  double* xn1 = inputs[0];
+  double* xn2 = inputs[1];
   double* out1 = outputs[0];
   double* out2 = outputs[1];
 
-  
-
-  for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2) // for loop to cycle through frame.
-  {
-    
+  for (int s = 0; s < nFrames; ++s, ++xn1, ++xn2, ++out1, ++out2) // for loop to cycle through frame.
+  {  
     //first we read our delayed output
     double yn = mpBuffer[mReadIndex];
-    
-    
+        
+	// if delay < 1 sample, interpolate between input x(n) and x(n-1)
+	if (mReadIndex == mWriteIndex && mDelaySam < 1.00)
+	{
+		// interpolate current input with input one sample behind
+		yn = *xn1; 
+	}
+	// read location one behind yn at y(n-1)
+	int mReadIndex_1 = mReadIndex - 1;
+	if (mReadIndex_1 < 0) mReadIndex_1 = mBufferSize - 1; // if wrapping around buffer 
+
+	//// get y(n-1)
+	float yn_1 = mpBuffer[mReadIndex_1];
+
+	//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
+	float fFracDelay = mDelaySam - (int)mDelaySam; // by casting to int, find fraction between delay samples
+
+	float fInterp = DelayPlugin::dLinTerp(0, 1, yn, yn_1, fFracDelay); 
+
     //if the delay is 0 samples we just feed it the input
     if (mDelaySam == 0)
     {
-      yn = *in1;
-    }
-    
-    
+      yn = *xn1;
+	}
+	else 
+	{
+		yn = fInterp;
+	}
+
     //now we write to out delay buffer
+    mpBuffer[mWriteIndex] = *xn1 + mFeedback * yn;
     
-    mpBuffer[mWriteIndex] = *in1 + mFeedback * yn;
-    
-    
-    //.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
-    *out1 =  ( mWet * yn + (1 - mWet) * *in1 );
-    
-    
-    //then we increment the write index, wrapping if it goes out of bounds.
+        //.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
+	*out1 = ((mWet * yn + (1 - mWet) * *xn1) * .707) + (prev_out * .707); // + (prev_out2 * .1) + (prev_out3 * .05); // + for crossfade 
+	prev_out3 = prev_out2;
+	prev_out2 = prev_out;
+	prev_out = *out1; // rememver current out as crossfade for next out
+        //then we increment the write index, wrapping if it goes out of bounds.
     ++mWriteIndex;
     if(mWriteIndex >= mBufferSize)
     {
       mWriteIndex = 0;
     }
     
-    //same with thr read index
+    //same with the read index
     ++mReadIndex;
     if(mReadIndex >= mBufferSize)
     {
@@ -162,3 +178,13 @@ void DelayPlugin::OnParamChange(int paramIdx)
   IMutexLock lock(this);
   cookVars();
 }
+
+float DelayPlugin::dLinTerp(float x1, float x2, float y1, float y2, float x)
+{
+	if (x2 - x1 == 0) { // avoid divide by 0 
+		return 0;
+	}
+	return (y1 * (x2 - x) + y2 * (x - x1)) / (x2 - x1);
+}
+
+

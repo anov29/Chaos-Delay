@@ -9,25 +9,25 @@ public:
   DelayPlugin(IPlugInstanceInfo instanceInfo);
   ~DelayPlugin();
 
+  float DelayPlugin::dLinTerp(float x1, float x2, float y1, float y2, float x);
   void Reset();
   void OnParamChange(int paramIdx);
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
   void cookVars();
   void resetDelay();
   
-  
-private:
+  private:
   double mDelaySam = 0.;
   double mFeedback = 0.;
   double mWet = 0.;
   
+  double prev_out = 0; 
+  double prev_out2 = 0;
+  double prev_out3 = 0;
   double* mpBuffer = NULL;
   int mReadIndex = 0;
   int mWriteIndex = 0;
   int mBufferSize = 0;
-  
-  
-  
-};
+    };
 
 #endif
