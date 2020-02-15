@@ -25,7 +25,7 @@ enum ELayout
 
 
 DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
+	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), useRand(true), randCount(0), randomIndex(0)
 {
   TRACE;
 
@@ -71,9 +71,28 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
   double* out2 = outputs[1];
 
   for (int s = 0; s < nFrames; ++s, ++xn1, ++xn2, ++out1, ++out2) // for loop to cycle through frame.
-  {  
-    //first we read our delayed output
-    double yn = mpBuffer[mReadIndex];
+  { 
+	  //first we read our delayed output
+	  double yn;
+
+	  if (randCount == 0) {
+		  randomIndex = std::rand() % mBufferSize;
+		  randCount++;
+	  }
+	  else {
+		  randomIndex = ++randomIndex;
+		  if (randomIndex > mBufferSize) randomIndex = 0; 
+		  randCount++;
+	  }
+	  if (randCount > mBufferSize / 500 || randCount >= mBufferSize) randCount = 0;
+
+
+	  if (useRand == true) {
+		  yn = mpBuffer[randomIndex];
+	  }
+	  else {
+		  yn = mpBuffer[mReadIndex];
+	  }
         
 	// if delay < 1 sample, interpolate between input x(n) and x(n-1)
 	if (mReadIndex == mWriteIndex && mDelaySam < 1.00)
@@ -81,14 +100,20 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		// interpolate current input with input one sample behind
 		yn = *xn1; 
 	}
+
+	float yn_1;
+	int mReadIndex_1 = 0;
 	// read location one behind yn at y(n-1)
-	int mReadIndex_1 = mReadIndex - 1;
+	if (useRand == true) {
+		mReadIndex_1 = randomIndex - 1;
+	} else {
+		int mReadIndex_1 = mReadIndex - 1;
+		//// get y(n-1)
+	}
 	if (mReadIndex_1 < 0) mReadIndex_1 = mBufferSize - 1; // if wrapping around buffer 
+	yn_1 = mpBuffer[mReadIndex_1];
 
-	//// get y(n-1)
-	float yn_1 = mpBuffer[mReadIndex_1];
-
-	//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
+		//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
 	float fFracDelay = mDelaySam - (int)mDelaySam; // by casting to int, find fraction between delay samples
 
 	float fInterp = DelayPlugin::dLinTerp(0, 1, yn, yn_1, fFracDelay); 
@@ -107,7 +132,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
     mpBuffer[mWriteIndex] = *xn1 + mFeedback * yn;
     
         //.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
-	*out1 = ((mWet * yn + (1 - mWet) * *xn1) * .707) + (prev_out * .707); // + (prev_out2 * .1) + (prev_out3 * .05); // + for crossfade 
+	*out1 = ((mWet * yn + (1 - mWet) * *xn1) * .707); // + (prev_out * .707); // + (prev_out2 * .1) + (prev_out3 * .05); // + for crossfade 
 	prev_out3 = prev_out2;
 	prev_out2 = prev_out;
 	prev_out = *out1; // rememver current out as crossfade for next out
@@ -125,6 +150,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
       mReadIndex = 0;
     }
     
+
     //because we are working in mono we'll just copy the left output to the right output.
     *out2 = *out1;
   }
