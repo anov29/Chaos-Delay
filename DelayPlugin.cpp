@@ -3,6 +3,7 @@
 #include "IControl.h"
 #include "resource.h"
 #include "IKnobMultiControlText.h"
+#include "Crossfade.h"
 
 const int kNumPrograms = 1;
 
@@ -31,8 +32,6 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), useRand(true), randCount(0), randomIndex(0)
 {
   TRACE;
-
-
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
   GetParam(kDelayMS)->InitDouble("Delay", 10., 0., 200., 0.01, "Milliseconds");
@@ -111,6 +110,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		  randomIndex = (lowRange + (std::rand() % (highRange - lowRange))) % mBufferSize; // pick sample within user specified range of delay 
 		  if (randomIndex < 0) randomIndex + mBufferSize;
 		  randCount++;
+		  Crossfade::setIsCrossfading(true); // jumping to new sample, need to crossfade with previous
 	  }
 	  else { // else continue sweeping through buffer 
 		  randomIndex = ++randomIndex;
@@ -154,8 +154,20 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
     //now we write to out delay buffer
     mpBuffer[mWriteIndex] = *xn1 + mFeedback * yn;
     
-        //.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
-	*out1 = ((mWet * yn + (1 - mWet) * *xn1) * .707); 
+	bool ifCrossfade = Crossfade::getIsCrossfading();
+	if (ifCrossfade) { // if currently performing a crossfade between 2 values, continue doing crossfade 
+		if (Crossfade::atBeginning()) {
+			Crossfade::startCrossfading(yn, yn_1);
+			yn = Crossfade::getCrossfadeValue();
+		}
+		else {
+			yn = Crossfade::getCrossfadeValue();
+		}
+	}
+
+	//.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
+	*out1 = ((mWet * yn + (1 - mWet) * *xn1) * .707);
+
 
 	//then we increment the write index, wrapping if it goes out of bounds.
     ++mWriteIndex;
