@@ -53,27 +53,26 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 
   IText *mText = new IText(11, &COLOR_BLACK, "Arial", IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault);
   pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(20, 200, (&knob)->W + 20, ((&knob)->H / (&knob)->N) + 220), kDelayMS, &knob, mText));
-  // pGraphics->AttachControl(new IKnobMultiControlText(this, 20, 200, kDelayMS, &knob));
 
   IRECT tmpRect2(80, 180, 200, 30);
   IText textProps2(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
   pGraphics->AttachControl(new ITextControl(this, tmpRect2, &textProps2, "Feedback"));
-  pGraphics->AttachControl(new IKnobMultiControl(this, 80, 200, kFeedbackPC, &knob));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(80, 200, (&knob)->W + 80, ((&knob)->H / (&knob)->N) + 220), kFeedbackPC, & knob, mText));
 
   IRECT tmpRect3(200, 180, 200, 30);
   IText textProps3(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
   pGraphics->AttachControl(new ITextControl(this, tmpRect3, &textProps3, "Change"));
-  pGraphics->AttachControl(new IKnobMultiControl(this, 200, 200, kChange, &knob));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(200, 200, (&knob)->W + 200, ((&knob)->H / (&knob)->N) + 220), kChange, &knob, mText));
 
   IRECT tmpRect4(140, 180, 200, 30);
   IText textProps4(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
   pGraphics->AttachControl(new ITextControl(this, tmpRect4, &textProps4, "Random"));
-  pGraphics->AttachControl(new IKnobMultiControl(this, 140, 200, kRandom, &knob));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(140, 200, (&knob)->W + 140, ((&knob)->H / (&knob)->N) + 220), kRandom, &knob, mText));
 
   IRECT tmpRect5(260, 180, 200, 30);
   IText textProps5(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
-  pGraphics->AttachControl(new ITextControl(this, tmpRect5, &textProps5, "Wet/Dry"));
-  pGraphics->AttachControl(new IKnobMultiControl(this, 260, 200, kWetPC, &knob));
+  pGraphics->AttachControl(new ITextControl(this, tmpRect5, &textProps5, "Dry/Wet"));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(260, 200, (&knob)->W + 260, ((&knob)->H / (&knob)->N) + 220), kWetPC, &knob, mText));
 
   AttachGraphics(pGraphics);
 
@@ -156,11 +155,9 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
     mpBuffer[mWriteIndex] = *xn1 + mFeedback * yn;
     
         //.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
-	*out1 = ((mWet * yn + (1 - mWet) * *xn1) * .707); // + (prev_out * .707); // + (prev_out2 * .1) + (prev_out3 * .05); // + for crossfade 
-	prev_out3 = prev_out2;
-	prev_out2 = prev_out;
-	prev_out = *out1; // rememver current out as crossfade for next out
-        //then we increment the write index, wrapping if it goes out of bounds.
+	*out1 = ((mWet * yn + (1 - mWet) * *xn1) * .707); 
+
+	//then we increment the write index, wrapping if it goes out of bounds.
     ++mWriteIndex;
     if(mWriteIndex >= mBufferSize)
     {
