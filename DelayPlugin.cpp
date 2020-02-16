@@ -10,6 +10,7 @@ enum EParams
   kDelayMS,
   kFeedbackPC,
   kWetPC,
+  kRandomness,
   kNumParams
 };
 
@@ -30,12 +31,11 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
   TRACE;
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
-
-  
   GetParam(kDelayMS)->InitDouble("Delay", 10., 0., 200., 0.01, "Milliseconds");
   GetParam(kFeedbackPC)->InitDouble("Feedback", 50., 0., 100.0, 0.01, "%");
   GetParam(kWetPC)->InitDouble("Wet/Dry", 50., 0., 100.0, 0.01, "%");
-  
+  GetParam(kRandomness)->InitInt("Randomness", 1, 1, 100, "%");
+
   
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
 
@@ -46,7 +46,8 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
   pGraphics->AttachControl(new IKnobMultiControl(this, 20, 200, kDelayMS, &knob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 80, 200, kFeedbackPC, &knob));
   pGraphics->AttachControl(new IKnobMultiControl(this, 140, 200, kWetPC, &knob));
-  
+  pGraphics->AttachControl(new IKnobMultiControl(this, 200, 200, kRandomness, &knob));
+
   AttachGraphics(pGraphics);
 
   //MakePreset("preset 1", ... );
@@ -84,7 +85,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		  if (randomIndex > mBufferSize) randomIndex = 0; 
 		  randCount++;
 	  }
-	  if (randCount > mBufferSize / 500 || randCount >= mBufferSize) randCount = 0;
+	  if (randCount > mBufferSize / mRandom || randCount >= mBufferSize) randCount = 0;
 
 
 	  if (useRand == true) {
@@ -201,7 +202,16 @@ void DelayPlugin::cookVars()
 
 void DelayPlugin::OnParamChange(int paramIdx)
 {
-  IMutexLock lock(this);
+	IMutexLock lock(this);
+
+	switch (paramIdx)
+	{
+	case kRandomness:
+		mRandom = GetParam(kRandomness)->Value(); 
+		break; 
+	default:
+		break;
+	}
   cookVars();
 }
 

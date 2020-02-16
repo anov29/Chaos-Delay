@@ -24,6 +24,7 @@ public:
   double mDelaySam = 0.;
   double mFeedback = 0.;
   double mWet = 0.;
+  int mRandom = 1; 
   
   double prev_out = 0; 
   double prev_out2 = 0;
