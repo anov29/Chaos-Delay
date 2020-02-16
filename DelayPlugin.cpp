@@ -2,6 +2,7 @@
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
 #include "resource.h"
+#include "IKnobMultiControlText.h"
 
 const int kNumPrograms = 1;
 
@@ -10,7 +11,8 @@ enum EParams
   kDelayMS,
   kFeedbackPC,
   kWetPC,
-  kRandomness,
+  kChange,
+  kRandom,
   kNumParams
 };
 
@@ -30,23 +32,48 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 {
   TRACE;
 
+
+
   //arguments are: name, defaultVal, minVal, maxVal, step, label
   GetParam(kDelayMS)->InitDouble("Delay", 10., 0., 200., 0.01, "Milliseconds");
   GetParam(kFeedbackPC)->InitDouble("Feedback", 50., 0., 100.0, 0.01, "%");
+  GetParam(kChange)->InitInt("Change Randomness", 1, 1, 100, "%");
+  GetParam(kRandom)->InitDouble("Randomness", 0., 0., 100.0, 0.01, "%");
   GetParam(kWetPC)->InitDouble("Wet/Dry", 50., 0., 100.0, 0.01, "%");
-  GetParam(kRandomness)->InitInt("Randomness", 1, 1, 100, "%");
 
-  
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
 
   pGraphics->AttachPanelBackground(&COLOR_GRAY);
   
   IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
 
-  pGraphics->AttachControl(new IKnobMultiControl(this, 20, 200, kDelayMS, &knob));
+  IRECT tmpRect(20, 180, 200, 30);
+  IText textProps(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect, &textProps, "Delay"));
+
+  IText *mText = new IText(11, &COLOR_BLACK, "Arial", IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault);
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(20, 200, (&knob)->W + 20, ((&knob)->H / (&knob)->N) + 220), kDelayMS, &knob, mText));
+  // pGraphics->AttachControl(new IKnobMultiControlText(this, 20, 200, kDelayMS, &knob));
+
+  IRECT tmpRect2(80, 180, 200, 30);
+  IText textProps2(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect2, &textProps2, "Feedback"));
   pGraphics->AttachControl(new IKnobMultiControl(this, 80, 200, kFeedbackPC, &knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, 140, 200, kWetPC, &knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, 200, 200, kRandomness, &knob));
+
+  IRECT tmpRect3(200, 180, 200, 30);
+  IText textProps3(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect3, &textProps3, "Change"));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 200, 200, kChange, &knob));
+
+  IRECT tmpRect4(140, 180, 200, 30);
+  IText textProps4(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect4, &textProps4, "Random"));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 140, 200, kRandom, &knob));
+
+  IRECT tmpRect5(260, 180, 200, 30);
+  IText textProps5(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect5, &textProps5, "Wet/Dry"));
+  pGraphics->AttachControl(new IKnobMultiControl(this, 260, 200, kWetPC, &knob));
 
   AttachGraphics(pGraphics);
 
@@ -76,43 +103,39 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 	  //first we read our delayed output
 	  double yn;
 
-	  if (randCount == 0) {
-		  randomIndex = std::rand() % mBufferSize;
+	  if (randCount == 0) { // if randCount 0, need to choose a new starting location for samples
+		  int range = mReadIndex * mRandom; // cannot change mReadIndex, as that is controlled by the user 
+		  int lowRange = mReadIndex - range; 
+		  int highRange = mReadIndex + range; 
+		  if (highRange == lowRange) (++highRange); // to prevent division by 0 
+
+		  randomIndex = (lowRange + (std::rand() % (highRange - lowRange))) % mBufferSize; // pick sample within user specified range of delay 
+		  if (randomIndex < 0) randomIndex + mBufferSize;
 		  randCount++;
 	  }
-	  else {
+	  else { // else continue sweeping through buffer 
 		  randomIndex = ++randomIndex;
 		  if (randomIndex > mBufferSize) randomIndex = 0; 
 		  randCount++;
 	  }
-	  if (randCount > mBufferSize / mRandom || randCount >= mBufferSize) randCount = 0;
+	  if (randCount > mBufferSize / mChange || randCount >= mBufferSize) randCount = 0; // make sure randCount stays within bounds
 
 
-	  if (useRand == true) {
-		  yn = mpBuffer[randomIndex];
-	  }
-	  else {
-		  yn = mpBuffer[mReadIndex];
-	  }
-        
+	yn = mpBuffer[randomIndex];
 	// if delay < 1 sample, interpolate between input x(n) and x(n-1)
-	if (mReadIndex == mWriteIndex && mDelaySam < 1.00)
+	if (randomIndex == mWriteIndex && mDelaySam < 1.00)
 	{
 		// interpolate current input with input one sample behind
 		yn = *xn1; 
 	}
 
 	float yn_1;
-	int mReadIndex_1 = 0;
+	int mRandomIndex_1 = 0;
 	// read location one behind yn at y(n-1)
-	if (useRand == true) {
-		mReadIndex_1 = randomIndex - 1;
-	} else {
-		int mReadIndex_1 = mReadIndex - 1;
-		//// get y(n-1)
-	}
-	if (mReadIndex_1 < 0) mReadIndex_1 = mBufferSize - 1; // if wrapping around buffer 
-	yn_1 = mpBuffer[mReadIndex_1];
+	mRandomIndex_1 = randomIndex - 1;
+
+	if (mRandomIndex_1 < 0) mRandomIndex_1 = mBufferSize - 1; // if wrapping around buffer 
+	yn_1 = mpBuffer[mRandomIndex_1];
 
 		//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
 	float fFracDelay = mDelaySam - (int)mDelaySam; // by casting to int, find fraction between delay samples
@@ -206,9 +229,11 @@ void DelayPlugin::OnParamChange(int paramIdx)
 
 	switch (paramIdx)
 	{
-	case kRandomness:
-		mRandom = GetParam(kRandomness)->Value(); 
+	case kChange:
+		mChange = GetParam(kChange)->Value(); 
 		break; 
+	case kRandom:
+		mRandom = GetParam(kRandom)->Value() / 100;
 	default:
 		break;
 	}
