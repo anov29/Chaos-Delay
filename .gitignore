@@ -18,6 +18,7 @@
 build-*
 ipch/*
 gui/*
+.vs/
 
 Icon?
 .DS_Stor*
