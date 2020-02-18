@@ -102,7 +102,9 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 	  double yn;
 
 	  if (randCount == 0) { // if randCount 0, need to choose a new starting location for samples
-		  int range = mReadIndex * mRandom; // cannot change mReadIndex, as that is controlled by the user 
+		  oldIndex = randomIndex; // save randomIndex current location before changing, so we know where to crossfade from 
+		  oldDelaySam = mDelaySam; // save old delay sample to know linear interpolation value of old samples 
+		  int range = mReadIndex * mRandom; // cannot change mReadIndex, as that is controlled by the user, so will use randomIndex 
 		  int lowRange = mReadIndex - range; 
 		  int highRange = mReadIndex + range; 
 		  if (highRange == lowRange) (++highRange); // to prevent division by 0 
@@ -111,10 +113,13 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		  if (randomIndex < 0) randomIndex + mBufferSize;
 		  randCount++;
 		  Crossfade::setIsCrossfading(true); // jumping to new sample, need to crossfade with previous
+		  crossfadeTime = -.9; // start crossfading with most of previous sample, and a little of new sample 
 	  }
 	  else { // else continue sweeping through buffer 
 		  randomIndex = ++randomIndex;
+		  oldIndex == ++oldIndex;
 		  if (randomIndex > mBufferSize) randomIndex = 0; 
+		  if (oldIndex > mBufferSize) oldIndex = 0; 
 		  randCount++;
 	  }
 	  if (randCount > mBufferSize / mChange || randCount >= mBufferSize) randCount = 0; // make sure randCount stays within bounds
@@ -139,7 +144,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
 	float fFracDelay = mDelaySam - (int)mDelaySam; // by casting to int, find fraction between delay samples
 
-	float fInterp = DelayPlugin::dLinTerp(0, 1, yn, yn_1, fFracDelay); 
+	float fInterp = dLinTerp(0, 1, yn, yn_1, fFracDelay); 
 
     //if the delay is 0 samples we just feed it the input
     if (mDelaySam == 0)
@@ -154,19 +159,19 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
     //now we write to out delay buffer
     mpBuffer[mWriteIndex] = *xn1 + mFeedback * yn;
     
-	bool ifCrossfade = Crossfade::getIsCrossfading();
-	if (ifCrossfade) { // if currently performing a crossfade between 2 values, continue doing crossfade 
-		if (Crossfade::atBeginning()) {
-			Crossfade::startCrossfading(yn, yn_1);
-			yn = Crossfade::getCrossfadeValue();
-		}
-		else {
-			yn = Crossfade::getCrossfadeValue();
+	if (Crossfade::getIsCrossfading()) { // if currently performing a crossfade between 2 values, continue doing crossfade 
+		double oldSample = mpBuffer[oldIndex]; // don't think we need to perform linear interpolation on this value, as it already contains linearly interpolated old sample 
+
+		yn = Crossfade::createCrossfade(yn, oldSample, crossfadeTime);
+		crossfadeTime += .1;
+		if (crossfadeTime >= 1.0) { // once reach 1, current sample fully playing, and have finished crossfade 
+			Crossfade::setIsCrossfading(false); 
+			crossfadeTime = -1.0; 
 		}
 	}
 
 	//.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
-	*out1 = ((mWet * yn + (1 - mWet) * *xn1) * .707);
+	*out1 = (mWet * yn + (1 - mWet) * *xn1);
 
 
 	//then we increment the write index, wrapping if it goes out of bounds.
