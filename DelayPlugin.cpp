@@ -4,6 +4,7 @@
 #include "resource.h"
 #include "IKnobMultiControlText.h"
 #include "Crossfade.h"
+#include "LinInterp.h"
 
 const int kNumPrograms = 1;
 
@@ -26,6 +27,13 @@ enum ELayout
   kGainY = 125,
   kKnobFrames = 60
 };
+
+void DelayPlugin::CreatePresets() {
+	MakePreset("clean", 0.0, 0.0, 50.0, 1, 0.0);
+	MakePreset("did i stutter??", 15.0, 85.0, 50.0, 12, 83.0);
+	MakePreset("funk soul brother", 200.0, 85.0, 50.0, 1, 100.0);
+	MakePreset("oh no", 150.0, 100.0, 100.0, 8, 100.0);
+}
 
 
 DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
@@ -75,8 +83,7 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 
   AttachGraphics(pGraphics);
 
-  //MakePreset("preset 1", ... );
-  MakeDefaultPreset((char *) "-", kNumPrograms);
+  CreatePresets();
 }
 
 DelayPlugin::~DelayPlugin()
@@ -86,6 +93,7 @@ DelayPlugin::~DelayPlugin()
     delete [] mpBuffer;
   }
 }
+
 
 void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
@@ -103,7 +111,6 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 
 	  if (randCount == 0) { // if randCount 0, need to choose a new starting location for samples
 		  oldIndex = randomIndex; // save randomIndex current location before changing, so we know where to crossfade from 
-		  oldDelaySam = mDelaySam; // save old delay sample to know linear interpolation value of old samples 
 		  int range = mReadIndex * mRandom; // cannot change mReadIndex, as that is controlled by the user, so will use randomIndex 
 		  int lowRange = mReadIndex - range; 
 		  int highRange = mReadIndex + range; 
@@ -144,7 +151,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
 	float fFracDelay = mDelaySam - (int)mDelaySam; // by casting to int, find fraction between delay samples
 
-	float fInterp = dLinTerp(0, 1, yn, yn_1, fFracDelay); 
+	float fInterp = LinInterp::dLinTerp(0, 1, yn, yn_1, fFracDelay); 
 
     //if the delay is 0 samples we just feed it the input
     if (mDelaySam == 0)
@@ -252,14 +259,6 @@ void DelayPlugin::OnParamChange(int paramIdx)
 		break;
 	}
   cookVars();
-}
-
-float DelayPlugin::dLinTerp(float x1, float x2, float y1, float y2, float x)
-{
-	if (x2 - x1 == 0) { // avoid divide by 0 
-		return 0;
-	}
-	return (y1 * (x2 - x) + y2 * (x - x1)) / (x2 - x1);
 }
 
 

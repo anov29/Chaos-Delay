@@ -285,6 +285,7 @@
     <ClInclude Include="Crossfade.h" />
     <ClInclude Include="DelayPlugin.h" />
     <ClInclude Include="IKnobMultiControlText.h" />
+    <ClInclude Include="LinInterp.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +300,7 @@
     <ClCompile Include="Crossfade.cpp" />
     <ClCompile Include="DelayPlugin.cpp" />
     <ClCompile Include="IKnobMultiControlText.cpp" />
+    <ClCompile Include="LinInterp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DelayPlugin.rc" />

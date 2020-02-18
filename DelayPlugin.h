@@ -15,28 +15,30 @@ public:
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
   void cookVars();
   void resetDelay();
-  
-  private:
-	  bool useRand; 
-	  int randCount;
-	  int randomIndex; 
+  void CreatePresets(); 
 
+  private:
+  bool useRand; 
+  
+  double mRandom = 0; // percent from 0 to 1, where 1 = 100% of buffer avaliable 
   double mDelaySam = 0.;
   double mFeedback = 0.;
   double mWet = 0.;
-  int mChange = 1; // how often to change mRandom 
-  double mRandom = 0; // percent from 0 to 1, where 1 = 100% of buffer avaliable 
-  
   double crossfadeTime = -1.0;  // range from [-1, 1], where -1 previous sample, and 1 current sample
   double prev_out = 0; 
   double prev_out2 = 0;
   double prev_out3 = 0;
+
   double* mpBuffer = NULL;
+
+  int randCount;
+  int randomIndex;
+  int mChange = 1; // how often to change mRandom 
   int mReadIndex = 0;
   int mWriteIndex = 0;
   int oldIndex = 0; // where read index used to be before crossfade 
-  double oldDelaySam = 0; // Old delay sample to use for interpolation
-  int mBufferSize = 0;
-    };
+  int mBufferSize = 0; 
+
+};
 
 #endif
