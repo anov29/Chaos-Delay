@@ -1,19 +1,19 @@
-#define PLUG_MFR "YourName"
-#define PLUG_NAME "DelayPlugin"
+#define PLUG_MFR "Andrew Novitskiy"
+#define PLUG_NAME "Chaos Delay"
 
 #define PLUG_CLASS_NAME DelayPlugin
 
-#define BUNDLE_MFR "YourName"
-#define BUNDLE_NAME "DelayPlugin"
+#define BUNDLE_MFR "Andrew Novitskiy"
+#define BUNDLE_NAME "Chaos Delay"
 
-#define PLUG_ENTRY DelayPlugin_Entry
-#define PLUG_VIEW_ENTRY DelayPlugin_ViewEntry
+#define PLUG_ENTRY ChaosDelay_Entry
+#define PLUG_VIEW_ENTRY ChaosDelay_ViewEntry
 
-#define PLUG_ENTRY_STR "DelayPlugin_Entry"
-#define PLUG_VIEW_ENTRY_STR "DelayPlugin_ViewEntry"
+#define PLUG_ENTRY_STR "ChaosDelay_Entry"
+#define PLUG_VIEW_ENTRY_STR "ChaosDelay_ViewEntry"
 
 #define VIEW_CLASS DelayPlugin_View
-#define VIEW_CLASS_STR "DelayPlugin_View"
+#define VIEW_CLASS_STR "ChaosDelay_View"
 
 // Format        0xMAJR.MN.BG - in HEX! so version 10.1.5 would be 0x000A0105
 #define PLUG_VER 0x00010000
@@ -21,9 +21,9 @@
 
 // http://service.steinberg.de/databases/plugin.nsf/plugIn?openForm
 // 4 chars, single quotes. At least one capital letter
-#define PLUG_UNIQUE_ID 'Ipef'
+#define PLUG_UNIQUE_ID 'ChDe'
 // make sure this is not the same as BUNDLE_MFR
-#define PLUG_MFR_ID 'Acme'
+#define PLUG_MFR_ID 'ChDe'
 
 // ProTools stuff
 
@@ -33,8 +33,8 @@
   const int PLUG_TYPE_IDS_AS[2] = {'EFA1', 'EFA2'}; // AudioSuite
 #endif
 
-#define PLUG_MFR_PT "YourName\nYourName\nAcme"
-#define PLUG_NAME_PT "DelayPlugin\nIPEF"
+#define PLUG_MFR_PT "Andrew Novitskiy"
+#define PLUG_NAME_PT "Chaos Delay\nIPEF"
 #define PLUG_TYPE_PT "Effect"
 #define PLUG_DOES_AUDIOSUITE 1
 
@@ -55,9 +55,11 @@ instrument determined by PLUG _IS _INST
 
 // Unique IDs for each image resource.
 #define KNOB_ID 101
+#define BACKGROUND_ID 102
 
 // Image resource locations for this plug.
-#define KNOB_FN "resources/img/knob.png"
+#define KNOB_FN "resources/img/new.png"
+#define BACKGROUND_FN "resources/img/Chaos-Delay.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 400

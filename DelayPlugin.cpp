@@ -23,8 +23,8 @@ enum ELayout
   kWidth = GUI_WIDTH,
   kHeight = GUI_HEIGHT,
 
-  kGainX = 125,
-  kGainY = 125,
+  kGainX = 32,
+  kGainY = 32,
   kKnobFrames = 60
 };
 
@@ -50,36 +50,32 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
 
-  pGraphics->AttachPanelBackground(&COLOR_GRAY);
+  pGraphics->AttachBackground(BACKGROUND_ID, BACKGROUND_FN);
   
   IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
 
-  IRECT tmpRect(20, 180, 200, 30);
-  IText textProps(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
-  pGraphics->AttachControl(new ITextControl(this, tmpRect, &textProps, "Delay"));
+  IText mKnobText(10, &COLOR_BLACK, "Arial", IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault);
+  IText controlText(14, &COLOR_BLACK, "Arial", IText::kStyleItalic, IText::kAlignNear, 0, IText::kQualityDefault);
 
-  IText *mText = new IText(11, &COLOR_BLACK, "Arial", IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault);
-  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(20, 200, (&knob)->W + 20, ((&knob)->H / (&knob)->N) + 220), kDelayMS, &knob, mText));
+  IRECT tmpRect(22, 189, 200, 30);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect, &controlText, "Delay"));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(20, 209, (&knob)->W + 20, ((&knob)->H / (&knob)->N) + 229), kDelayMS, &knob, &mKnobText));
 
-  IRECT tmpRect2(80, 180, 200, 30);
-  IText textProps2(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
-  pGraphics->AttachControl(new ITextControl(this, tmpRect2, &textProps2, "Feedback"));
-  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(80, 200, (&knob)->W + 80, ((&knob)->H / (&knob)->N) + 220), kFeedbackPC, & knob, mText));
+  IRECT tmpRect2(72, 189, 200, 30);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect2, &controlText, "Feedback"));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(80, 209, (&knob)->W + 80, ((&knob)->H / (&knob)->N) + 229), kFeedbackPC, & knob, &mKnobText));
 
-  IRECT tmpRect3(200, 180, 200, 30);
-  IText textProps3(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
-  pGraphics->AttachControl(new ITextControl(this, tmpRect3, &textProps3, "Change"));
-  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(200, 200, (&knob)->W + 200, ((&knob)->H / (&knob)->N) + 220), kChange, &knob, mText));
+  IRECT tmpRect3(195, 189, 200, 30);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect3, &controlText, "Change"));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(200, 209, (&knob)->W + 200, ((&knob)->H / (&knob)->N) + 229), kChange, &knob, &mKnobText));
 
-  IRECT tmpRect4(140, 180, 200, 30);
-  IText textProps4(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
-  pGraphics->AttachControl(new ITextControl(this, tmpRect4, &textProps4, "Random"));
-  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(140, 200, (&knob)->W + 140, ((&knob)->H / (&knob)->N) + 220), kRandom, &knob, mText));
+  IRECT tmpRect4(135, 189, 200, 30);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect4, &controlText, "Random"));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(140, 209, (&knob)->W + 140, ((&knob)->H / (&knob)->N) + 229), kRandom, &knob, &mKnobText));
 
-  IRECT tmpRect5(260, 180, 200, 30);
-  IText textProps5(14, &COLOR_BLACK, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
-  pGraphics->AttachControl(new ITextControl(this, tmpRect5, &textProps5, "Dry/Wet"));
-  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(260, 200, (&knob)->W + 260, ((&knob)->H / (&knob)->N) + 220), kWetPC, &knob, mText));
+  IRECT tmpRect5(255, 189, 200, 30);
+  pGraphics->AttachControl(new ITextControl(this, tmpRect5, &controlText, "Dry/Wet"));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, *new IRECT(260, 209, (&knob)->W + 260, ((&knob)->H / (&knob)->N) + 229), kWetPC, &knob, &mKnobText));
 
   AttachGraphics(pGraphics);
 
@@ -142,7 +138,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 
 	float yn_1;
 	int mRandomIndex_1 = 0;
-	// read location one behind yn at y(n-1)
+	// read location one behind yn at y(n-1) 
 	mRandomIndex_1 = randomIndex - 1;
 
 	if (mRandomIndex_1 < 0) mRandomIndex_1 = mBufferSize - 1; // if wrapping around buffer 
