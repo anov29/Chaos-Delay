@@ -1,7 +1,7 @@
 # Chaos Delay
 A randomized delay made by Andrew Novitskiy 
 
-Delay knob up goes up to 200ms. 
+Delay knob up goes up to 2000ms. 
 
 Random knob sets the spread of samples that Chaos Delay chooses from the feedback buffer. At 100, every delayed sample can randomly be chosen. 
 

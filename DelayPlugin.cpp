@@ -42,7 +42,7 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
   TRACE;
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
-  GetParam(kDelayMS)->InitDouble("Delay", 10., 0., 200., 0.01, "Milliseconds");
+  GetParam(kDelayMS)->InitDouble("Delay", 10., 0., 2000., 0.01, "Milliseconds");
   GetParam(kFeedbackPC)->InitDouble("Feedback", 50., 0., 100.0, 0.01, "%");
   GetParam(kChange)->InitInt("Change Randomness", 1, 1, 100, "%");
   GetParam(kRandom)->InitDouble("Randomness", 0., 0., 100.0, 0.01, "%");
@@ -110,9 +110,13 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		  int range = mReadIndex * mRandom; // cannot change mReadIndex, as that is controlled by the user, so will use randomIndex 
 		  int lowRange = mReadIndex - range; 
 		  int highRange = mReadIndex + range; 
-		  if (highRange == lowRange) (++highRange); // to prevent division by 0 
+		  if (highRange == lowRange) { // if same, random at 1, no difference between random and read index
+			  randomIndex = mReadIndex;
+		  }
+		  else {
+			  randomIndex = (lowRange + (std::rand() % (highRange - lowRange))) % mBufferSize; // pick sample within user specified range of delay 
+		  }
 
-		  randomIndex = (lowRange + (std::rand() % (highRange - lowRange))) % mBufferSize; // pick sample within user specified range of delay 
 		  if (randomIndex < 0) randomIndex + mBufferSize;
 		  randCount++;
 		  Crossfade::setIsCrossfading(true); // jumping to new sample, need to crossfade with previous
@@ -125,7 +129,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		  if (oldIndex > mBufferSize) oldIndex = 0; 
 		  randCount++;
 	  }
-	  if (randCount > mBufferSize / mChange || randCount >= mBufferSize) randCount = 0; // make sure randCount stays within bounds
+	  if ((randCount > mBufferSize / mChange || randCount >= mBufferSize) && randCount != 1) randCount = 0; // make sure randCount stays within bounds. If randCount 1, ignore value 
 
 
 	yn = mpBuffer[randomIndex];
@@ -166,7 +170,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 		double oldSample = mpBuffer[oldIndex]; // don't think we need to perform linear interpolation on this value, as it already contains linearly interpolated old sample 
 
 		yn = Crossfade::createCrossfade(yn, oldSample, crossfadeTime);
-		crossfadeTime += .1;
+		crossfadeTime += .01;
 		if (crossfadeTime >= 1.0) { // once reach 1, current sample fully playing, and have finished crossfade 
 			Crossfade::setIsCrossfading(false); 
 			crossfadeTime = -1.0; 
