@@ -32,7 +32,9 @@ void DelayPlugin::CreatePresets() {
 	MakePreset("clean", 0.0, 0.0, 50.0, 1, 0.0);
 	MakePreset("did i stutter??", 15.0, 85.0, 50.0, 12, 83.0);
 	MakePreset("funk soul brother", 200.0, 85.0, 50.0, 1, 100.0);
-	MakePreset("oh no", 150.0, 100.0, 100.0, 8, 100.0);
+	MakePreset("oh no", 95.0, 82, 100.0, 19, 100.0);
+	MakePreset("gallop", 700.00, 47, 50.0, 100, 5.0);
+
 }
 
 
@@ -107,11 +109,13 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 
 	  if (randCount == 0) { // if randCount 0, need to choose a new starting location for samples
 		  oldIndex = randomIndex; // save randomIndex current location before changing, so we know where to crossfade from 
-		  int range = mReadIndex * mRandom; // cannot change mReadIndex, as that is controlled by the user, so will use randomIndex 
+		  int range = mBufferSize * mRandom; // range will fully cover buffer at random = 1
 		  int lowRange = mReadIndex - range; 
+		  if (lowRange < 0) lowRange = 0; 
 		  int highRange = mReadIndex + range; 
+		  if (highRange >= mBufferSize) highRange = mBufferSize - 1;
 		  if (highRange == lowRange) { // if same, random at 1, no difference between random and read index
-			  randomIndex = mReadIndex;
+			  randomIndex = mReadIndex; // cannot change mReadIndex, as that is controlled by the user, so will use randomIndex 
 		  }
 		  else {
 			  randomIndex = (lowRange + (std::rand() % (highRange - lowRange))) % mBufferSize; // pick sample within user specified range of delay 
