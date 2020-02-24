@@ -2,9 +2,6 @@
 //  IKnobMultiControlText.h
 //  Class for displaying text along with a knob.
 //
-//  Created by Brad Guesman on 1/13/18.
-//
-
 #ifndef IKnobMultiControlText_h
 #define IKnobMultiControlText_h
 #include "IPlug_include_in_plug_hdr.h"

@@ -9,17 +9,16 @@ public:
   DelayPlugin(IPlugInstanceInfo instanceInfo);
   ~DelayPlugin();
 
-  float DelayPlugin::dLinTerp(float x1, float x2, float y1, float y2, float x);
   void Reset();
   void OnParamChange(int paramIdx);
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
   void cookVars();
   void resetDelay();
   void CreatePresets(); 
+  void UpdateIndexes(); 
+  void newRandomIndex(); 
 
   private:
-  bool useRand; 
-  
   double mRandom = 0; // percent from 0 to 1, where 1 = 100% of buffer avaliable 
   double mDelaySam = 0.;
   double mFeedback = 0.;
@@ -31,8 +30,8 @@ public:
 
   double* mpBuffer = NULL;
 
-  int randCount;
-  int randomIndex;
+  int randCount = 0;
+  int randomIndex = 0;
   int mChange = 1; // how often to change mRandom 
   int mReadIndex = 0;
   int mWriteIndex = 0;

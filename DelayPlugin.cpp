@@ -34,12 +34,10 @@ void DelayPlugin::CreatePresets() {
 	MakePreset("funk soul brother", 200.0, 85.0, 50.0, 1, 100.0);
 	MakePreset("oh no", 95.0, 82, 100.0, 19, 100.0);
 	MakePreset("gallop", 700.00, 47, 50.0, 100, 5.0);
-
 }
 
-
 DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
-	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), useRand(true), randCount(0), randomIndex(0)
+	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 {
   TRACE;
 
@@ -92,7 +90,6 @@ DelayPlugin::~DelayPlugin()
   }
 }
 
-
 void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
   // Mutex is already locked for us.
@@ -107,34 +104,19 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 	  //first we read our delayed output
 	  double yn;
 
-	  if (randCount == 0) { // if randCount 0, need to choose a new starting location for samples
-		  oldIndex = randomIndex; // save randomIndex current location before changing, so we know where to crossfade from 
-		  int range = mBufferSize * mRandom; // range will fully cover buffer at random = 1
-		  int lowRange = mReadIndex - range; 
-		  if (lowRange < 0) lowRange = 0; 
-		  int highRange = mReadIndex + range; 
-		  if (highRange >= mBufferSize) highRange = mBufferSize - 1;
-		  if (highRange == lowRange) { // if same, random at 1, no difference between random and read index
-			  randomIndex = mReadIndex; // cannot change mReadIndex, as that is controlled by the user, so will use randomIndex 
-		  }
-		  else {
-			  randomIndex = (lowRange + (std::rand() % (highRange - lowRange))) % mBufferSize; // pick sample within user specified range of delay 
-		  }
-
-		  if (randomIndex < 0) randomIndex + mBufferSize;
-		  randCount++;
-		  Crossfade::setIsCrossfading(true); // jumping to new sample, need to crossfade with previous
-		  crossfadeTime = -.9; // start crossfading with most of previous sample, and a little of new sample 
+	  if (randCount == 0) // if randCount 0, need to choose a new starting location for samples
+	  { 
+		  newRandomIndex(); 
 	  }
-	  else { // else continue sweeping through buffer 
+	  else // else continue sweeping through buffer 
+	  { 
 		  randomIndex = ++randomIndex;
-		  oldIndex == ++oldIndex;
+		  oldIndex = ++oldIndex;
 		  if (randomIndex > mBufferSize) randomIndex = 0; 
 		  if (oldIndex > mBufferSize) oldIndex = 0; 
 		  randCount++;
 	  }
 	  if ((randCount > mBufferSize / mChange || randCount >= mBufferSize) && randCount != 1) randCount = 0; // make sure randCount stays within bounds. If randCount 1, ignore value 
-
 
 	yn = mpBuffer[randomIndex];
 	// if delay < 1 sample, interpolate between input x(n) and x(n-1)
@@ -152,9 +134,8 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 	if (mRandomIndex_1 < 0) mRandomIndex_1 = mBufferSize - 1; // if wrapping around buffer 
 	yn_1 = mpBuffer[mRandomIndex_1];
 
-		//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
+	//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
 	float fFracDelay = mDelaySam - (int)mDelaySam; // by casting to int, find fraction between delay samples
-
 	float fInterp = LinInterp::dLinTerp(0, 1, yn, yn_1, fFracDelay); 
 
     //if the delay is 0 samples we just feed it the input
@@ -170,12 +151,14 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
     //now we write to out delay buffer
     mpBuffer[mWriteIndex] = *xn1 + mFeedback * yn;
     
-	if (Crossfade::getIsCrossfading()) { // if currently performing a crossfade between 2 values, continue doing crossfade 
+	if (Crossfade::getIsCrossfading()) // if currently performing a crossfade between 2 values, continue doing crossfade 
+	{ 
 		double oldSample = mpBuffer[oldIndex]; // don't think we need to perform linear interpolation on this value, as it already contains linearly interpolated old sample 
 
 		yn = Crossfade::createCrossfade(yn, oldSample, crossfadeTime);
 		crossfadeTime += .01;
-		if (crossfadeTime >= 1.0) { // once reach 1, current sample fully playing, and have finished crossfade 
+		if (crossfadeTime >= 1.0) // once reach 1, current sample fully playing, and have finished crossfade
+		{  
 			Crossfade::setIsCrossfading(false); 
 			crossfadeTime = -1.0; 
 		}
@@ -183,26 +166,50 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 
 	//.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
 	*out1 = (mWet * yn + (1 - mWet) * *xn1);
-
-
-	//then we increment the write index, wrapping if it goes out of bounds.
-    ++mWriteIndex;
-    if(mWriteIndex >= mBufferSize)
-    {
-      mWriteIndex = 0;
-    }
-    
-    //same with the read index
-    ++mReadIndex;
-    if(mReadIndex >= mBufferSize)
-    {
-      mReadIndex = 0;
-    }
-    
+	UpdateIndexes(); 
 
     //because we are working in mono we'll just copy the left output to the right output.
     *out2 = *out1;
   }
+}
+
+void DelayPlugin::newRandomIndex() {
+	oldIndex = randomIndex; // save randomIndex current location before changing, so we know where to crossfade from 
+	int range = mBufferSize * mRandom; // range will fully cover buffer at random = 1
+	int lowRange = mReadIndex - range;
+	if (lowRange < 0) lowRange = 0;
+	int highRange = mReadIndex + range;
+	if (highRange >= mBufferSize) highRange = mBufferSize - 1;
+	if (highRange == lowRange) // if same, random at 1, no difference between random and read index
+	{ 
+		randomIndex = mReadIndex; // cannot change mReadIndex, as that is controlled by the user, so will use randomIndex 
+	}
+	else 
+	{
+		randomIndex = (lowRange + (std::rand() % (highRange - lowRange))) % mBufferSize; // pick sample within user specified range of delay 
+	}
+
+	if (randomIndex < 0) randomIndex + mBufferSize;
+	randCount++;
+	Crossfade::setIsCrossfading(true); // jumping to new sample, need to crossfade with previous
+	crossfadeTime = -.9; // start crossfading with most of previous sample, and a little of new sample 
+}
+
+void DelayPlugin::UpdateIndexes() //then we increment the write index, wrapping if it goes out of bounds.
+{
+	
+	++mWriteIndex;
+	if (mWriteIndex >= mBufferSize)
+	{
+		mWriteIndex = 0;
+	}
+
+	//same with the read index
+	++mReadIndex;
+	if (mReadIndex >= mBufferSize)
+	{
+		mReadIndex = 0;
+	}
 }
 
 void DelayPlugin::Reset()
@@ -246,7 +253,6 @@ void DelayPlugin::cookVars()
     mReadIndex += mBufferSize;
   }
 }
-
 
 void DelayPlugin::OnParamChange(int paramIdx)
 {
