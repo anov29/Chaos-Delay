@@ -94,15 +94,15 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 {
   // Mutex is already locked for us.
 
-  double* xn1 = inputs[0];
-  double* xn2 = inputs[1];
+  double* input1 = inputs[0];
+  double* input2 = inputs[1];
   double* out1 = outputs[0];
   double* out2 = outputs[1];
 
-  for (int s = 0; s < nFrames; ++s, ++xn1, ++xn2, ++out1, ++out2) // for loop to cycle through frame.
+  for (int s = 0; s < nFrames; ++s, ++input1, ++input2, ++out1, ++out2) // for loop to cycle through frame.
   { 
 	  //first we read our delayed output
-	  double yn;
+	  double sample;
 
 	  if (randCount == 0) // if randCount 0, need to choose a new starting location for samples
 	  { 
@@ -118,12 +118,12 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 	  }
 	  if ((randCount > mBufferSize / mChange || randCount >= mBufferSize) && randCount != 1) randCount = 0; // make sure randCount stays within bounds. If randCount 1, ignore value 
 
-	yn = mpBuffer[randomIndex];
+	sample = mpBuffer[randomIndex];
 	// if delay < 1 sample, interpolate between input x(n) and x(n-1)
 	if (randomIndex == mWriteIndex && mDelaySam < 1.00)
 	{
 		// interpolate current input with input one sample behind
-		yn = *xn1; 
+		sample = *input1; 
 	}
 
 	float yn_1;
@@ -136,26 +136,26 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 
 	//// interpolate: 0, 1 for DSP range, yn to yn-1 for user defined range. 
 	float fFracDelay = mDelaySam - (int)mDelaySam; // by casting to int, find fraction between delay samples
-	float fInterp = LinInterp::dLinTerp(0, 1, yn, yn_1, fFracDelay); 
+	float fInterp = LinInterp::dLinTerp(0, 1, sample, yn_1, fFracDelay); 
 
     //if the delay is 0 samples we just feed it the input
     if (mDelaySam == 0)
     {
-      yn = *xn1;
+      sample = *input1;
 	}
 	else 
 	{
-		yn = fInterp;
+		sample = fInterp;
 	}
 
     //now we write to out delay buffer
-    mpBuffer[mWriteIndex] = *xn1 + mFeedback * yn;
+    mpBuffer[mWriteIndex] = *input1 + mFeedback * sample;
     
 	if (Crossfade::getIsCrossfading()) // if currently performing a crossfade between 2 values, continue doing crossfade 
 	{ 
 		double oldSample = mpBuffer[oldIndex]; // don't think we need to perform linear interpolation on this value, as it already contains linearly interpolated old sample 
 
-		yn = Crossfade::createCrossfade(yn, oldSample, crossfadeTime);
+		sample = Crossfade::createCrossfade(sample, oldSample, crossfadeTime);
 		crossfadeTime += .01;
 		if (crossfadeTime >= 1.0) // once reach 1, current sample fully playing, and have finished crossfade
 		{  
@@ -165,7 +165,7 @@ void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int 
 	}
 
 	//.. and then perform the calculation for the output. Notice how the *in is factored by 1 - mWet (which gives the dry level, since wet + dry = 1)
-	*out1 = (mWet * yn + (1 - mWet) * *xn1);
+	*out1 = (mWet * sample + (1 - mWet) * *input1);
 	UpdateIndexes(); 
 
     //because we are working in mono we'll just copy the left output to the right output.
