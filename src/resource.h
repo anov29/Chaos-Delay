@@ -58,8 +58,8 @@ instrument determined by PLUG _IS _INST
 #define BACKGROUND_ID 102
 
 // Image resource locations for this plug.
-#define KNOB_FN "resources/img/new.png"
-#define BACKGROUND_FN "resources/img/Chaos-Delay.png"
+#define KNOB_FN "../resources/img/new.png"
+#define BACKGROUND_FN "../resources/img/Chaos-Delay.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 400
