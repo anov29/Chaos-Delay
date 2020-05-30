@@ -1,0 +1,42 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\Microsoft.Common.CurrentVersion.targets(1768,5): warning : The referenced project '..\..\PT9_SDK\AlturaPorts\TDMPlugIns\PlugInLibrary\WinBuild\PlugInLib.vcxproj' does not exist.
+  Hosts.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IBitmapMonoText.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IControl.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IGraphics.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IGraphicsWin.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IParam.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPlugBase.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPlugRTAS.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPlugStructs.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPopupMenu.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  Log.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPlugCustomUI.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPlugGroup.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPlugProcess.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPlugProcessAS.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  IPlugProcessRTAS.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  digicode1.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  digicode2.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  digicode3.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  DelayPlugin.cpp
+c:\wdl-ol\wdl\iplug\rtas\digicode.h(24): fatal error C1083: Cannot open include file: 'ForcedInclude.h': No such file or directory
+  Generating Code...

@@ -1,0 +1,45 @@
+﻿  LinInterp.cpp
+  IKnobMultiControlText.cpp
+c:\wdl-ol\wdl\iplug\iplugstructs.h(239): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(241): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(247): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(249): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  DelayPlugin.cpp
+c:\wdl-ol\wdl\iplug\iplugstructs.h(239): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(241): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(247): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(249): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\iplugexamples\chaos-delay\delayplugin.cpp(135): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\wdl-ol\iplugexamples\chaos-delay\delayplugin.cpp(138): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\wdl-ol\iplugexamples\chaos-delay\delayplugin.cpp(139): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\wdl-ol\iplugexamples\chaos-delay\delayplugin.cpp(178): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\wdl-ol\iplugexamples\chaos-delay\delayplugin.cpp(192): warning C4552: '+': operator has no effect; expected operator with side-effect
+c:\wdl-ol\iplugexamples\chaos-delay\delayplugin.cpp(220): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\wdl-ol\iplugexamples\chaos-delay\delayplugin.cpp(264): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Crossfade.cpp
+  app_main.cpp
+c:\wdl-ol\wdl\iplug\iplugstructs.h(239): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(241): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(247): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(249): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  app_dialog.cpp
+c:\wdl-ol\wdl\iplug\iplugstructs.h(239): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(241): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(247): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(249): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  RtMidi.cpp
+  RtAudio.cpp
+  IPlugStandalone.cpp
+c:\wdl-ol\wdl\iplug\iplugstructs.h(239): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(241): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(247): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(249): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  asiolist.cpp
+  asiodrivers.cpp
+  asio.cpp
+  Generating Code...
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\sal.h(2866): warning RC4005: '__useHeader' : redefinition
+  
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\sal.h(2876): warning RC4005: '__on_failure' : redefinition
+  
+  DelayPlugin-app.vcxproj -> C:\wdl-ol\IPlugExamples\Chaos-Delay\build-win\app\Win32\bin\DelayPlugin.exe

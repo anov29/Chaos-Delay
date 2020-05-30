@@ -1,0 +1,26 @@
+﻿  DelayPlugin.cpp
+c:\wdl-ol\wdl\iplug\iplugstructs.h(239): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(241): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(247): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(249): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\iplugexamples\simpledelayplugin\delayplugin.cpp(119): warning C4552: '+': operator has no effect; expected operator with side-effect
+c:\wdl-ol\iplugexamples\simpledelayplugin\delayplugin.cpp(126): warning C4553: '==': operator has no effect; did you intend '='?
+  IPlugVST3.cpp
+c:\wdl-ol\wdl\iplug\iplugstructs.h(239): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(241): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(247): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\wdl-ol\wdl\iplug\iplugstructs.h(249): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  vstsinglecomponenteffect.cpp
+c:\wdl-ol\vst3_sdk\base\source\updatehandler.h(41): fatal error C1083: Cannot open include file: 'base/thread/include/flock.h': No such file or directory
+  vstparameters.cpp
+  vstinitiids.cpp
+  vstcomponentbase.cpp
+  vstcomponent.cpp
+  vstbus.cpp
+  vstaudioeffect.cpp
+  pluginfactoryvst3.cpp
+  dllmain.cpp
+  pluginview.cpp
+  ustring.cpp
+  funknown.cpp
+  Generating Code...

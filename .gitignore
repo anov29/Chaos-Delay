@@ -15,7 +15,6 @@
 *.xcworkspace
 *.xcuserdata
 *.xcschememanagement.plist
-build-*
 ipch/*
 gui/*
 .vs/
