@@ -36,7 +36,7 @@ ipch/*
 gui/*
 installer/*
 manual/*
-DelayPlugin.xcodeproj/*
+src/*.xcodeproj/*
 build-win/*
 .vs/*
 src/.vs/*
