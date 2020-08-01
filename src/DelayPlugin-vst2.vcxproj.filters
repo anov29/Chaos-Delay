@@ -7,6 +7,7 @@
     </ClCompile>
     <ClCompile Include="LinInterp.cpp" />
     <ClCompile Include="Crossfade.cpp" />
+    <ClCompile Include="RandomDelayGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DelayPlugin.h" />
@@ -16,6 +17,7 @@
     </ClInclude>
     <ClInclude Include="LinInterp.h" />
     <ClInclude Include="Crossfade.h" />
+    <ClInclude Include="RandomDelayGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DelayPlugin.rc" />

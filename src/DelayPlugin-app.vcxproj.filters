@@ -51,6 +51,7 @@
     <ClInclude Include="IKnobMultiControlText.h" />
     <ClInclude Include="Crossfade.h" />
     <ClInclude Include="LinInterp.h" />
+    <ClInclude Include="RandomDelayGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -81,6 +82,7 @@
     <ClCompile Include="IKnobMultiControlText.cpp" />
     <ClCompile Include="Crossfade.cpp" />
     <ClCompile Include="LinInterp.cpp" />
+    <ClCompile Include="RandomDelayGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DelayPlugin.rc" />

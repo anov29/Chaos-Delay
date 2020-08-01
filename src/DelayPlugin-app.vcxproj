@@ -286,6 +286,7 @@
     <ClInclude Include="DelayPlugin.h" />
     <ClInclude Include="IKnobMultiControlText.h" />
     <ClInclude Include="LinInterp.h" />
+    <ClInclude Include="RandomDelayGenerator.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -301,6 +302,7 @@
     <ClCompile Include="DelayPlugin.cpp" />
     <ClCompile Include="IKnobMultiControlText.cpp" />
     <ClCompile Include="LinInterp.cpp" />
+    <ClCompile Include="RandomDelayGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DelayPlugin.rc" />
