@@ -1,9 +1,0 @@
-﻿  RandomDelayGenerator.cpp
-c:\wdl-ol\chaos-delay\src\randomdelaygenerator.cpp(32): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\wdl-ol\chaos-delay\src\randomdelaygenerator.cpp(53): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\wdl-ol\chaos-delay\src\randomdelaygenerator.cpp(102): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\wdl-ol\chaos-delay\src\randomdelaygenerator.cpp(105): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\wdl-ol\chaos-delay\src\randomdelaygenerator.cpp(106): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\wdl-ol\chaos-delay\src\randomdelaygenerator.cpp(142): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\wdl-ol\chaos-delay\src\randomdelaygenerator.cpp(156): warning C4552: '+': operator has no effect; expected operator with side-effect
-  DelayPlugin-app.vcxproj -> C:\wdl-ol\Chaos-Delay\src\build-win\app\Win32\bin\DelayPlugin.exe
