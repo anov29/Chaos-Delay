@@ -30,12 +30,13 @@
 *.xib
 *.ipch
 *Pages*
+*.cbp*
 Debug/*
 ipch/*
 gui/*
 installer/*
 manual/*
-LCRChorus.xcodeproj/*
+*.xcodeproj/*
 build-win/*
 .vs/*
 src/.vs/*
