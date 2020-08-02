@@ -28,14 +28,6 @@ enum ELayout
   kKnobFrames = 60
 };
 
-void DelayPlugin::CreatePresets() {
-	MakePreset("clean", 0.0, 0.0, 50.0, 1, 0.0);
-	MakePreset("did i stutter??", 15.0, 85.0, 50.0, 12, 83.0);
-	MakePreset("funk soul brother", 200.0, 85.0, 50.0, 1, 100.0);
-	MakePreset("oh no", 95.0, 82, 100.0, 19, 100.0);
-	MakePreset("gallop", 700.00, 47, 50.0, 100, 5.0);
-}
-
 DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 {
@@ -84,6 +76,14 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 
 DelayPlugin::~DelayPlugin()
 {
+}
+
+void DelayPlugin::CreatePresets() {
+	MakePreset("clean", 0.0, 0.0, 50.0, 1, 0.0);
+	MakePreset("did i stutter??", 15.0, 85.0, 50.0, 12, 83.0);
+	MakePreset("funk soul brother", 200.0, 85.0, 50.0, 1, 100.0);
+	MakePreset("oh no", 95.0, 82, 100.0, 19, 100.0);
+	MakePreset("gallop", 700.00, 47, 50.0, 100, 5.0);
 }
 
 void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
