@@ -84,10 +84,6 @@ DelayPlugin::DelayPlugin(IPlugInstanceInfo instanceInfo)
 
 DelayPlugin::~DelayPlugin()
 {
-  if(mpBuffer)
-  {
-    delete [] mpBuffer;
-  }
 }
 
 void DelayPlugin::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
